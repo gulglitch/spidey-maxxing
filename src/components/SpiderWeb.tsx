@@ -68,12 +68,12 @@ export const SpiderWeb = ({ start, end, opacity = 1, strands = 18 }: SpiderWebPr
 
   return (
     <group>
-      {/* Tight bundle from hand to the point where it bursts open */}
+      {/* Tight bundle from hand to the point where it bursts open - ENHANCED */}
       <WebLine
         start={start}
         end={convergencePoint}
         opacity={opacity}
-        lineWidth={2.5}
+        lineWidth={3.5}
         showSparkles
       />
 
@@ -84,13 +84,14 @@ export const SpiderWeb = ({ start, end, opacity = 1, strands = 18 }: SpiderWebPr
           start={strand.start}
           end={strand.end}
           opacity={strand.opacity}
-          lineWidth={strand.lineWidth}
+          lineWidth={strand.lineWidth * 1.3}
           showSparkles={false}
         />
       ))}
 
-      {/* Single light at the burst point instead of one per strand - keeps it lit without tanking perf */}
-      <pointLight position={end} intensity={1.5} distance={6} color="#aaccff" />
+      {/* Enhanced burst point glow */}
+      <pointLight position={end} intensity={3.5} distance={10} color="#aaccff" />
+      <pointLight position={convergencePoint} intensity={2.5} distance={8} color="#ffffff" />
     </group>
   );
 };

@@ -41,23 +41,33 @@ export const WebLine = ({
 
   return (
     <group>
-      {/* Sharp bright core strand */}
+      {/* Sharp bright core strand - ENHANCED GLOW */}
       <Line
         points={points}
         color={color}
-        lineWidth={lineWidth}
+        lineWidth={lineWidth * 1.5}
         transparent
         opacity={opacity}
         toneMapped={false}
       />
 
-      {/* Wider, softer strand underneath - gives bloom something bigger to catch */}
+      {/* Medium glow layer */}
       <Line
         points={points}
         color={color}
-        lineWidth={lineWidth * 3}
+        lineWidth={lineWidth * 4}
         transparent
-        opacity={opacity * 0.25}
+        opacity={opacity * 0.4}
+        toneMapped={false}
+      />
+
+      {/* Wider, softer outer glow - gives bloom effect */}
+      <Line
+        points={points}
+        color={color}
+        lineWidth={lineWidth * 8}
+        transparent
+        opacity={opacity * 0.15}
         toneMapped={false}
       />
 
@@ -65,11 +75,11 @@ export const WebLine = ({
       {showSparkles && strandLength > 0.01 && (
         <Sparkles
           position={midForSparkles}
-          count={Math.max(4, Math.floor(strandLength * 2))}
-          scale={[strandLength, 0.4, 0.4] as [number, number, number]}
-          size={2}
-          speed={0.4}
-          opacity={opacity}
+          count={Math.max(6, Math.floor(strandLength * 3))}
+          scale={[strandLength, 0.5, 0.5] as [number, number, number]}
+          size={3}
+          speed={0.5}
+          opacity={opacity * 1.2}
           color={color}
         />
       )}

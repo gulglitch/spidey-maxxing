@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import type { WebStore, WebState } from '../types';
+import type { WebStore, WebState, WebAttachment, WebInteractionMode } from '../types';
 
 const initialWebState: WebState = {
   isActive: false,
@@ -9,10 +9,21 @@ const initialWebState: WebState = {
   mode: 'idle'
 };
 
-export const useWebStore = create<WebStore>((set) => ({
+interface ExtendedWebStore extends WebStore {
+  attachments: WebAttachment[];
+  interactionMode: WebInteractionMode;
+  addAttachment: (attachment: WebAttachment) => void;
+  removeAttachment: (id: number) => void;
+  clearAttachments: () => void;
+  setInteractionMode: (mode: WebInteractionMode) => void;
+}
+
+export const useWebStore = create<ExtendedWebStore>((set) => ({
   webState: initialWebState,
   handData: null,
   gestureResult: null,
+  attachments: [],
+  interactionMode: 'shoot',
 
   setWebState: (state) => 
     set((prev) => ({ 
@@ -37,5 +48,21 @@ export const useWebStore = create<WebStore>((set) => ({
     }),
 
   resetWeb: () => 
-    set({ webState: initialWebState })
+    set({ webState: initialWebState }),
+
+  addAttachment: (attachment) =>
+    set((state) => ({
+      attachments: [...state.attachments, attachment]
+    })),
+
+  removeAttachment: (id) =>
+    set((state) => ({
+      attachments: state.attachments.filter(a => a.id !== id)
+    })),
+
+  clearAttachments: () =>
+    set({ attachments: [] }),
+
+  setInteractionMode: (mode) =>
+    set({ interactionMode: mode })
 }));

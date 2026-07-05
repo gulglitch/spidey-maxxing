@@ -316,22 +316,47 @@ spidey-maxxing/
 **Goals**
 - ✅ Web swinging mechanics
 - ✅ Object pulling
-- ✅ Multiple web points
-- ✅ Rope physics
+- ✅ Multiple web points support
+- ✅ Rope physics with Verlet integration
 
 **Deliverables**
-- Functional web swinging
-- Pull objects toward hand
-- Rope with segment physics
-- Smooth pendulum motion
+- ✅ Functional web swinging with rope physics
+- ✅ Pull objects toward hand with force application
+- ✅ Rope with segment physics and constraints
+- ✅ Smooth pendulum motion with damping
+- ✅ Interactive mode selector UI (Shoot/Swing/Pull)
+- ✅ Physics-enabled test environment
+- ✅ Multiple attachment point tracking
 
 **Key Tasks**
-1. Implement rope segmentation
-2. Build swinging physics
-3. Create pendulum system
-4. Add object pulling force
-5. Handle multiple attach points
-6. Optimize rope rendering
+1. ✅ Implement rope segmentation with Verlet integration
+2. ✅ Build swinging physics with pendulum dynamics
+3. ✅ Create pendulum system with distance constraints
+4. ✅ Add object pulling force with physics bodies
+5. ✅ Handle multiple attach points via store
+6. ✅ Optimize rope rendering with segment reduction
+
+**Implementation Details**
+- Created `SwingingRope.tsx` with Verlet physics simulation
+- Created `PullableObject.tsx` with physics bodies and pull forces
+- Created `AdvancedWebShooter.tsx` supporting 3 interaction modes
+- Created `InteractionModeSelector.tsx` UI for mode switching
+- Created `InteractiveTestObjects.tsx` with physics-enabled environment
+- Updated `webStore.ts` to track multiple attachments
+- Integrated `@react-three/cannon` for physics simulation
+- Added distance constraints for rope segment integrity
+- Implemented spring forces for realistic swinging motion
+
+**How It Works**
+- **Shoot Mode**: Traditional web shooting with sticking
+- **Swing Mode**: Attaches web and simulates rope with 20 segments
+  - Uses Verlet integration for physics
+  - Distance constraints maintain rope length
+  - Gravity and tension create realistic swing motion
+- **Pull Mode**: Attaches to objects and applies pull force
+  - Objects glow when being pulled
+  - Force strength: 150 units toward hand
+  - Completion detection at 70% distance threshold
 
 ### Phase 5: Visual Effects (Week 5)
 

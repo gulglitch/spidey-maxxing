@@ -24,7 +24,24 @@ export interface WebState {
   position: [number, number, number];
   velocity: [number, number, number];
   attachPoint: [number, number, number] | null;
-  mode: 'idle' | 'shooting' | 'attached' | 'swinging';
+  mode: 'idle' | 'shooting' | 'attached' | 'swinging' | 'pulling';
+}
+
+// Web interaction modes
+export type WebInteractionMode = 'shoot' | 'swing' | 'pull';
+
+export interface WebAttachment {
+  id: number;
+  attachPoint: Vector3;
+  attachedObjectId?: string;
+  createdAt: number;
+}
+
+// For Vector3 type
+export interface Vector3 {
+  x: number;
+  y: number;
+  z: number;
 }
 
 // Store types

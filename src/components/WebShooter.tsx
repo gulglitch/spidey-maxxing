@@ -1,9 +1,10 @@
 import { useRef, useState, useEffect } from 'react';
-import { useFrame } from '@react-three/fiber';
+import { useFrame, useThree } from '@react-three/fiber';
 import { Vector3 } from 'three';
 import { SpiderWeb } from './SpiderWeb';
 import type { HandData, GestureResult } from '../types';
-import { landmarkTo3D, calculateVelocity, getShootDirection } from '../utils/coordinateTransform';
+import { landmarkTo3D, getShootDirection } from '../utils/coordinateTransform';
+import { checkWebCollision } from '../utils/raycasting';
 
 
 interface WebShooterProps {
@@ -18,30 +19,30 @@ interface WebProjectile {
   velocity: Vector3;
   life: number;
   maxLife: number;
+  isAttached: boolean;
+  attachPoint?: Vector3;
 }
 
 export const WebShooter = ({ handData, gestureResult }: WebShooterProps) => {
   const [webs, setWebs] = useState<WebProjectile[]>([]);
-  const [handPosition3D, setHandPosition3D] = useState<[number, number, number]>([0, 0, 0]);
   const previousHandPos = useRef<[number, number, number]>([0, 0, 0]);
+  const currentHandPos = useRef<[number, number, number]>([0, 0, 0]);
   const wasGestureActive = useRef(false);
   const webIdCounter = useRef(0);
+  
+  // Get scene for raycasting
+  const { scene } = useThree();
 
-  // Debug logging
+  // Update hand position every frame
   useEffect(() => {
-    console.log('WebShooter received handData:', handData);
-    console.log('WebShooter received gestureResult:', gestureResult);
-  }, [handData, gestureResult]);
-
-  // Update hand position
-  useEffect(() => {
-    if (handData) {
-      // Use wrist position (landmark 0)
-      const wrist = handData.landmarks[0];
-      const pos3D = landmarkTo3D(wrist, 20);
-      console.log('Hand position updated:', pos3D);
-      setHandPosition3D(pos3D);
-      previousHandPos.current = pos3D;
+    if (handData && handData.landmarks.length >= 9) {
+      // Use index finger tip (landmark 8) for web shooting origin
+      const indexFingerTip = handData.landmarks[8];
+      const pos3D = landmarkTo3D(indexFingerTip, 75, 10); // Match Scene3D camera settings
+      
+      // Store previous position before updating current
+      previousHandPos.current = currentHandPos.current;
+      currentHandPos.current = pos3D;
     }
   }, [handData]);
 
@@ -55,46 +56,104 @@ export const WebShooter = ({ handData, gestureResult }: WebShooterProps) => {
   }, [gestureResult?.isWebShooter, handData]);
 
   const shootWeb = () => {
-    const velocity = calculateVelocity(
-      handPosition3D,
-      previousHandPos.current,
-      0.016
-    );
+    if (!handData || handData.landmarks.length < 13) {
+      console.log('❌ Not enough landmarks to shoot');
+      return;
+    }
 
-    const direction = getShootDirection(handPosition3D, velocity);
+    // Get required landmarks for direction calculation
+    const indexFingerTip = handData.landmarks[8];  // Index finger tip
+    const wrist = handData.landmarks[0];            // Wrist
+    const middleFinger = handData.landmarks[12];    // Middle finger tip
+
+    // Calculate direction based on hand orientation
+    const direction = getShootDirection(indexFingerTip, wrist, middleFinger);
     const speed = 50; // Web shooting speed
 
     const newWeb: WebProjectile = {
       id: webIdCounter.current++,
-      startPosition: new Vector3(...handPosition3D),
-      currentPosition: new Vector3(...handPosition3D),
+      startPosition: new Vector3(...currentHandPos.current),
+      currentPosition: new Vector3(...currentHandPos.current),
       velocity: new Vector3(
         direction[0] * speed,
         direction[1] * speed,
         direction[2] * speed
       ),
       life: 0,
-      maxLife: 3.0 // 3 seconds lifetime
+      maxLife: 5.0, // 5 seconds lifetime
+      isAttached: false,
     };
 
     setWebs((prev) => [...prev, newWeb]);
 
-    // Play sound effect (we'll add this later)
-    console.log('🕸️ THWIP!');
+    console.log('🕸️ THWIP!', {
+      from: currentHandPos.current,
+      direction: direction,
+      velocity: [direction[0] * speed, direction[1] * speed, direction[2] * speed]
+    });
   };
 
-  // Animate webs
-  useFrame((state, delta) => {
+  // Animate webs with collision detection
+  useFrame((_state, delta) => {
+    // Get all objects in scene for collision detection
+    const testObjects = scene.getObjectByName('test-objects');
+    const collisionObjects = testObjects ? testObjects.children : [];
+
+    // Debug: log available collision objects count
+    if (webs.length > 0 && collisionObjects.length === 0) {
+      console.warn('⚠️ No collision objects found in scene!');
+    }
+
     setWebs((currentWebs) => {
       return currentWebs
         .map((web) => {
-          // Apply gravity
-          web.velocity.y -= 9.8 * delta;
+          // Skip physics if web is attached
+          if (web.isAttached && web.attachPoint) {
+            web.life += delta;
+            return web;
+          }
 
-          // Update position
-          web.currentPosition.x += web.velocity.x * delta;
-          web.currentPosition.y += web.velocity.y * delta;
-          web.currentPosition.z += web.velocity.z * delta;
+          // Debug: Log web position and velocity every 30 frames
+          if (Math.random() < 0.05) {
+            console.log('🕸️ Web flying:', {
+              pos: [web.currentPosition.x.toFixed(1), web.currentPosition.y.toFixed(1), web.currentPosition.z.toFixed(1)],
+              vel: [web.velocity.x.toFixed(1), web.velocity.y.toFixed(1), web.velocity.z.toFixed(1)],
+              speed: web.velocity.length().toFixed(1)
+            });
+          }
+
+          // Check for collision before moving
+          const collision = checkWebCollision(
+            web.currentPosition,
+            web.velocity,
+            collisionObjects,
+            delta
+          );
+
+          if (collision.hit && collision.point) {
+            // Web hit something! Attach it
+            web.isAttached = true;
+            web.attachPoint = collision.point.clone();
+            web.currentPosition.copy(collision.point);
+            web.velocity.set(0, 0, 0);
+            web.maxLife = 8.0; // Attached webs last longer
+            
+            console.log('💥💥💥 WEB SUCCESSFULLY ATTACHED! 💥💥💥');
+            console.log('Attach point:', [
+              collision.point.x.toFixed(2),
+              collision.point.y.toFixed(2), 
+              collision.point.z.toFixed(2)
+            ]);
+            console.log('Collision distance:', collision.distance?.toFixed(2));
+          } else {
+            // Apply gravity
+            web.velocity.y -= 9.8 * delta;
+
+            // Update position
+            web.currentPosition.x += web.velocity.x * delta;
+            web.currentPosition.y += web.velocity.y * delta;
+            web.currentPosition.z += web.velocity.z * delta;
+          }
 
           // Update life
           web.life += delta;
@@ -107,28 +166,37 @@ export const WebShooter = ({ handData, gestureResult }: WebShooterProps) => {
 
   return (
     <group>
-      {/* Hand position indicator */}
+      {/* DEBUG: Visual marker at index finger tip - should align with red dot */}
       {handData && (
-        <mesh position={handPosition3D}>
-          <sphereGeometry args={[0.5, 32, 32]} />
-          <meshStandardMaterial
-            color={gestureResult?.isWebShooter ? '#00ff00' : '#ff0000'}
-            emissive={gestureResult?.isWebShooter ? '#00ff00' : '#ff0000'}
-            emissiveIntensity={1}
+        <mesh position={currentHandPos.current}>
+          <sphereGeometry args={[0.3, 16, 16]} />
+          <meshBasicMaterial 
+            color="#00ffff" 
+            transparent 
+            opacity={0.8}
             toneMapped={false}
-          />
-          {/* Glow effect */}
-          <pointLight
-            intensity={2}
-            distance={5}
-            color={gestureResult?.isWebShooter ? '#00ff00' : '#ff0000'}
           />
         </mesh>
       )}
 
+      {/* DEBUG: Show web projectile positions */}
+      {webs.map((web) => (
+        <mesh key={`debug-${web.id}`} position={web.currentPosition}>
+          <sphereGeometry args={[0.5, 8, 8]} />
+          <meshBasicMaterial 
+            color={web.isAttached ? "#00ff00" : "#ff00ff"} 
+            transparent 
+            opacity={0.9}
+            toneMapped={false}
+          />
+        </mesh>
+      ))}
+
       {/* Render converging-and-bursting web strands */}
       {webs.map((web) => {
-        const opacity = 1 - web.life / web.maxLife;
+        const opacity = web.isAttached 
+          ? 0.8 // Attached webs stay visible
+          : 1 - web.life / web.maxLife; // Fading webs
 
         return (
           <SpiderWeb
@@ -136,7 +204,7 @@ export const WebShooter = ({ handData, gestureResult }: WebShooterProps) => {
             start={web.startPosition}
             end={web.currentPosition}
             opacity={opacity}
-            strands={18}
+            strands={web.isAttached ? 12 : 18} // Fewer strands when attached
           />
         );
       })}

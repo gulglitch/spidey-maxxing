@@ -4,6 +4,7 @@ import { detectWebShooterGesture } from './utils/gestureRecognition';
 import { useWebStore } from './store/webStore';
 import { WebcamView } from './components/WebcamView';
 import { Scene3D } from './components/Scene3D';
+import { InteractionModeSelector } from './components/InteractionModeSelector';
 import './App.css';
 
 function App() {
@@ -23,16 +24,24 @@ function App() {
 
   return (
     <>
-      {/* 3D Scene - Behind everything */}
+      {/* Fullscreen Webcam Video - Base Layer */}
+      {!isLoading && !error && (
+        <WebcamView videoElement={videoRef.current} handData={handData} />
+      )}
+
+      {/* 3D Canvas Overlay - On top of video */}
       {!isLoading && !error && (
         <Scene3D handData={handData} gestureResult={gestureResult} />
       )}
 
-      {/* UI Overlay */}
+      {/* UI Overlay - On top of everything */}
       <div className="app">
         <div className="header">
           <h1>🕷️ Spidey Maxxing</h1>
         </div>
+
+        {/* Interaction Mode Selector */}
+        {!isLoading && !error && <InteractionModeSelector />}
 
         {isLoading && (
           <div className="loading-overlay">
@@ -50,8 +59,6 @@ function App() {
 
         {!isLoading && !error && (
           <>
-            <WebcamView videoElement={videoRef.current} handData={handData} />
-            
             <div className="status-panel">
               <div className="status-item">
                 <span className="label">Hand Detected:</span>
@@ -73,16 +80,6 @@ function App() {
                   {gestureResult?.isWebShooter ? '🕸️ ACTIVE' : '⭕ Inactive'}
                 </span>
               </div>
-            </div>
-
-            <div className="instructions">
-              <h3>📋 Instructions:</h3>
-              <ol>
-                <li>Show your hand to the webcam</li>
-                <li>Make the gesture: 🤘 (fold middle + ring fingers)</li>
-                <li>Watch the 3D scene behind - webs will shoot!</li>
-                <li>Green sphere = gesture active, Red = inactive</li>
-              </ol>
             </div>
           </>
         )}
