@@ -1,4 +1,4 @@
-import { Raycaster, Vector3, Object3D, Intersection, Sphere } from 'three';
+import { Raycaster, Vector3, Object3D, Intersection, Box3 } from 'three';
 
 /**
  * Perform raycasting to detect collisions
@@ -20,69 +20,39 @@ export const raycastWeb = (
 };
 
 /**
- * Check if a web projectile has hit something using multiple detection methods
+ * Enhanced collision detection specifically for buildings
  */
-export const checkWebCollision = (
+export const checkBuildingCollision = (
   webPosition: Vector3,
   webVelocity: Vector3,
-  objects: Object3D[],
+  scene: any,
   delta: number
-): { hit: boolean; point?: Vector3; normal?: Vector3; distance?: number; object?: Object3D } => {
-  if (objects.length === 0) {
+): { hit: boolean; point?: Vector3; normal?: Vector3; distance?: number; object?: any } => {
+  
+  // Filter for building meshes only
+  const buildingObjects: any[] = [];
+  scene.traverse((obj: any) => {
+    if (obj.isMesh && obj.userData?.type === 'building') {
+      buildingObjects.push(obj);
+    }
+  });
+
+  if (buildingObjects.length === 0) {
     return { hit: false };
   }
 
-  // Method 1: Sphere-based proximity detection (for close-range hits)
-  const collisionRadius = 0.5; // Web collision radius
-  const sphere = new Sphere(webPosition, collisionRadius);
-
-  for (const obj of objects) {
-    if (!obj.visible) continue;
-    
-    // Get object's world position
-    obj.updateMatrixWorld(true);
-    const objPosition = new Vector3();
-    obj.getWorldPosition(objPosition);
-    
-    // Check distance to object
-    const distance = webPosition.distanceTo(objPosition);
-    
-    // Rough size estimation - get bounding sphere radius if available
-    let objectRadius = 1.5; // Default radius
-    if (obj.type === 'Mesh') {
-      const mesh = obj as any;
-      if (mesh.geometry && mesh.geometry.boundingSphere) {
-        mesh.geometry.computeBoundingSphere();
-        objectRadius = mesh.geometry.boundingSphere.radius;
-      }
-    }
-    
-    // If web is close enough to object, consider it a hit
-    if (distance < (objectRadius + collisionRadius)) {
-      console.log(`🎯 Proximity hit detected! Distance: ${distance.toFixed(2)}, Object:`, obj.type);
-      return {
-        hit: true,
-        point: objPosition.clone(),
-        distance: distance,
-        object: obj
-      };
-    }
-  }
-
-  // Method 2: Raycast in velocity direction (for moving hits)
+  // Method 1: Raycast in velocity direction
   const direction = webVelocity.clone().normalize();
   const speed = webVelocity.length();
-  
-  // Check multiple frames ahead to avoid tunneling
-  const lookAheadTime = 0.1; // Look 100ms ahead
-  const maxRayDistance = speed * lookAheadTime + 5; // Add extra buffer
+  const lookAheadTime = 0.15;
+  const maxRayDistance = speed * lookAheadTime + 8;
   
   const raycaster = new Raycaster(webPosition, direction, 0, maxRayDistance);
-  const intersections = raycaster.intersectObjects(objects, true);
+  const intersections = raycaster.intersectObjects(buildingObjects, true);
 
   if (intersections.length > 0) {
     const intersection = intersections[0];
-    console.log(`🎯 Raycast hit detected! Distance: ${intersection.distance.toFixed(2)}`);
+    console.log('🎯 Building hit! Distance:', intersection.distance.toFixed(2));
     return {
       hit: true,
       point: intersection.point,
@@ -92,35 +62,35 @@ export const checkWebCollision = (
     };
   }
 
-  // Method 3: Check next position (predictive)
+  // Method 2: Expanded bounding box check
   const nextPosition = webPosition.clone().add(
     webVelocity.clone().multiplyScalar(delta)
   );
   
-  for (const obj of objects) {
+  for (const obj of buildingObjects) {
     if (!obj.visible) continue;
-    
+
     obj.updateMatrixWorld(true);
-    const objPosition = new Vector3();
-    obj.getWorldPosition(objPosition);
-    
-    const distance = nextPosition.distanceTo(objPosition);
-    
-    let objectRadius = 1.5;
-    if (obj.type === 'Mesh') {
-      const mesh = obj as any;
-      if (mesh.geometry && mesh.geometry.boundingSphere) {
-        mesh.geometry.computeBoundingSphere();
-        objectRadius = mesh.geometry.boundingSphere.radius;
-      }
-    }
-    
-    if (distance < (objectRadius + collisionRadius)) {
-      console.log(`🎯 Predictive hit detected! Distance: ${distance.toFixed(2)}`);
+    const bounds = new Box3().setFromObject(obj).expandByScalar(1.0);
+
+    if (bounds.containsPoint(nextPosition)) {
+      console.log('🏢 Building bounds hit!');
+      // Snap to nearest building surface
+      const center = new Vector3();
+      bounds.getCenter(center);
+      const size = new Vector3();
+      bounds.getSize(size);
+      
+      // Find closest surface point
+      const hitPoint = nextPosition.clone();
+      hitPoint.x = Math.max(bounds.min.x, Math.min(bounds.max.x, hitPoint.x));
+      hitPoint.y = Math.max(bounds.min.y, Math.min(bounds.max.y, hitPoint.y));
+      hitPoint.z = Math.max(bounds.min.z, Math.min(bounds.max.z, hitPoint.z));
+      
       return {
         hit: true,
-        point: objPosition.clone(),
-        distance: distance,
+        point: hitPoint,
+        distance: webPosition.distanceTo(hitPoint),
         object: obj
       };
     }

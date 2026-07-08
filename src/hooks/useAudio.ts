@@ -7,6 +7,7 @@ import {
   playPullSynth 
 } from '../utils/audioSynthesis';
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 interface SoundConfig {
   volume?: number;
   loop?: boolean;

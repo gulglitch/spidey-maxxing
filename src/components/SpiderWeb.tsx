@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+﻿import { useMemo } from 'react';
 import { Vector3 } from 'three';
 import { WebLine } from './WebLine';
 
@@ -15,7 +15,7 @@ export const SpiderWeb = ({ start, end, opacity = 1, strands = 18 }: SpiderWebPr
   // where the burst happens right near the target, not halfway there.
   const convergencePoint = useMemo(() => {
     return new Vector3().lerpVectors(start, end, 0.82);
-  }, [start, end]);
+  }, [start.x, start.y, start.z, end.x, end.y, end.z]);
 
   // Two vectors perpendicular to the shoot direction, used to scatter the fan
   // strands in a cone around the endpoint instead of a flat line.
@@ -33,7 +33,7 @@ export const SpiderWeb = ({ start, end, opacity = 1, strands = 18 }: SpiderWebPr
     const upVec = new Vector3().crossVectors(rightVec, direction).normalize();
 
     return { right: rightVec, up: upVec };
-  }, [start, end]);
+  }, [start.x, start.y, start.z, end.x, end.y, end.z]);
 
   const fanStrands = useMemo(() => {
     const fanArray: {
@@ -64,7 +64,22 @@ export const SpiderWeb = ({ start, end, opacity = 1, strands = 18 }: SpiderWebPr
     }
 
     return fanArray;
-  }, [convergencePoint, end, right, up, strands, opacity]);
+  }, [
+    convergencePoint.x,
+    convergencePoint.y,
+    convergencePoint.z,
+    end.x,
+    end.y,
+    end.z,
+    right.x,
+    right.y,
+    right.z,
+    up.x,
+    up.y,
+    up.z,
+    strands,
+    opacity
+  ]);
 
   return (
     <group>

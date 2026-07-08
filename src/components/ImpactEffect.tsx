@@ -32,7 +32,6 @@ export const ImpactEffect = ({
       <WebParticles
         position={new Vector3(0, 0, 0)}
         count={40}
-        spread={3}
         speed={8}
         color="#ffffff"
         size={0.15}
@@ -43,7 +42,6 @@ export const ImpactEffect = ({
       <WebParticles
         position={new Vector3(0, 0, 0)}
         count={20}
-        spread={2}
         speed={4}
         color="#aaccff"
         size={0.2}
@@ -54,7 +52,6 @@ export const ImpactEffect = ({
       <WebParticles
         position={new Vector3(0, 0, 0)}
         count={15}
-        spread={1.5}
         speed={10}
         color="#ffff00"
         size={0.1}

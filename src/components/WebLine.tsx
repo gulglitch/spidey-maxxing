@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+﻿import { useMemo } from 'react';
 import { Vector3, CatmullRomCurve3 } from 'three';
 import { Line, Sparkles } from '@react-three/drei';
 
@@ -30,14 +30,15 @@ export const WebLine = ({
 
     const curve = new CatmullRomCurve3([start, midPoint, end]);
     return curve.getPoints(24);
-  }, [start, end]);
+  }, [start.x, start.y, start.z, end.x, end.y, end.z]);
 
   const midForSparkles = useMemo(
     () => new Vector3().lerpVectors(start, end, 0.5),
-    [start, end]
+    [start.x, start.y, start.z, end.x, end.y, end.z]
   );
 
-  const strandLength = useMemo(() => start.distanceTo(end), [start, end]);
+  const strandLength = useMemo(() => start.distanceTo(end), [start.x, start.y, start.z, end.x, end.y, end.z]
+  );
 
   return (
     <group>

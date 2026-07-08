@@ -19,7 +19,7 @@ export const RopeSegment = ({
   mass = 0.05,
   onPositionUpdate
 }: RopeSegmentProps) => {
-  const [ref, api] = useSphere(() => ({
+  const [, api] = useSphere(() => ({
     mass: isFixed ? 0 : mass,
     position,
     args: [0.1], // Small sphere for segment

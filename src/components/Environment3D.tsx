@@ -1,6 +1,5 @@
 import { useRef } from 'react';
 import { Mesh } from 'three';
-import { useFrame } from '@react-three/fiber';
 
 export const Environment3D = () => {
   const buildingRefs = useRef<Mesh[]>([]);

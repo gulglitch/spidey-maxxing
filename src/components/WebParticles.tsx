@@ -6,7 +6,6 @@ import * as THREE from 'three';
 interface WebParticlesProps {
   position: THREE.Vector3;
   count?: number;
-  spread?: number;
   speed?: number;
   color?: string;
   size?: number;
@@ -16,7 +15,6 @@ interface WebParticlesProps {
 export const WebParticles = ({
   position,
   count = 30,
-  spread = 2,
   speed = 5,
   color = '#ffffff',
   size = 0.1,

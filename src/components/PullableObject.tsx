@@ -2,7 +2,6 @@ import { useRef, useState } from 'react';
 import { useFrame } from '@react-three/fiber';
 import { useBox } from '@react-three/cannon';
 import { Vector3 } from 'three';
-import type { Mesh } from 'three';
 
 interface PullableObjectProps {
   position: [number, number, number];
@@ -21,7 +20,6 @@ export const PullableObject = ({
   pullForce = null,
   onPullComplete
 }: PullableObjectProps) => {
-  const meshRef = useRef<Mesh>(null);
   const [isBeingPulled, setIsBeingPulled] = useState(false);
   
   const [ref, api] = useBox(() => ({
@@ -61,7 +59,7 @@ export const PullableObject = ({
       );
 
       // Add some rotation for visual effect
-      const torque = [
+      const torque: [number, number, number] = [
         (Math.random() - 0.5) * 2,
         (Math.random() - 0.5) * 2,
         (Math.random() - 0.5) * 2

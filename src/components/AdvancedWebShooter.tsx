@@ -1,4 +1,4 @@
-import { useRef, useState, useEffect } from 'react';
+﻿import { useRef, useState, useEffect } from 'react';
 import { useFrame, useThree } from '@react-three/fiber';
 import { Vector3 } from 'three';
 import { SpiderWeb } from './SpiderWeb';
@@ -9,7 +9,7 @@ import { useWebStore } from '../store/webStore';
 import { useAudio } from '../hooks/useAudio';
 import type { HandData, GestureResult } from '../types';
 import { landmarkTo3D, getShootDirection } from '../utils/coordinateTransform';
-import { checkWebCollision } from '../utils/raycasting';
+import { checkWebCollision, checkBuildingCollision } from '../utils/raycasting';
 
 interface WebShooterProps {
   handData: HandData | null;
@@ -47,7 +47,7 @@ export const AdvancedWebShooter = ({ handData, gestureResult }: WebShooterProps)
   const addAttachment = useWebStore((state) => state.addAttachment);
 
   // Audio system
-  const { playThwip, playImpact, playSwing, stopAll } = useAudio();
+  const { playThwip, playImpact, playSwing, playPull } = useAudio();
 
   // Update hand position every frame
   useEffect(() => {
@@ -80,7 +80,7 @@ export const AdvancedWebShooter = ({ handData, gestureResult }: WebShooterProps)
 
   const shootWeb = () => {
     if (!handData || handData.landmarks.length < 13) {
-      console.log('❌ Not enough landmarks to shoot');
+      console.log('âŒ Not enough landmarks to shoot');
       return;
     }
 
@@ -116,10 +116,10 @@ export const AdvancedWebShooter = ({ handData, gestureResult }: WebShooterProps)
 
     setWebs((prev) => [...prev, newWeb]);
 
-    // 🔊 PLAY SOUND EFFECT
+    // ðŸ”Š PLAY SOUND EFFECT
     playThwip();
 
-    console.log('🕸️🕸️🕸️ WEB SHOT DEBUG 🕸️🕸️🕸️');
+    console.log('ðŸ•¸ï¸ðŸ•¸ï¸ðŸ•¸ï¸ WEB SHOT DEBUG ðŸ•¸ï¸ðŸ•¸ï¸ðŸ•¸ï¸');
     console.log('Mode:', webMode);
     console.log('Start Position:', currentHandPos.current);
     console.log('Direction Vector:', direction);
@@ -131,92 +131,102 @@ export const AdvancedWebShooter = ({ handData, gestureResult }: WebShooterProps)
     console.log('Index Finger Tip (normalized):', indexFingerTip);
     console.log('Wrist (normalized):', wrist);
     console.log('Middle Finger (normalized):', middleFinger);
-    console.log('═══════════════════════════════════');
+    console.log('â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•');
   };
 
   // Animate webs with mode-specific behavior
-  useFrame((state, delta) => {
+  useFrame((_, delta) => {
     const testObjects = scene.getObjectByName('test-objects');
-    const collisionObjects = testObjects ? testObjects.children : [];
+    const collisionObjects = testObjects
+      ? testObjects.children.filter((object) => object.type !== 'GridHelper')
+      : [];
 
     setWebs((currentWebs) => {
       return currentWebs
         .map((web) => {
+          const nextWeb: WebProjectile = {
+            ...web,
+            startPosition: web.startPosition.clone(),
+            currentPosition: web.currentPosition.clone(),
+            velocity: web.velocity.clone(),
+            attachPoint: web.attachPoint?.clone(),
+          };
+
           // Update hand position for attached webs
-          if (web.isAttached && (web.mode === 'swinging' || web.mode === 'pulling')) {
-            web.startPosition.set(...currentHandPos.current);
+          if (nextWeb.isAttached && (nextWeb.mode === 'swinging' || nextWeb.mode === 'pulling')) {
+            nextWeb.startPosition.set(...currentHandPos.current);
             
             // Play swing sound for swinging mode
-            if (web.mode === 'swinging' && web.life < 0.1) {
+            if (nextWeb.mode === 'swinging' && nextWeb.life < 0.1) {
               playSwing();
             }
           }
 
           // Skip physics if web is attached and in shooting mode
-          if (web.isAttached && web.mode === 'shooting' && web.attachPoint) {
-            web.life += delta;
-            return web;
+          if (nextWeb.isAttached && nextWeb.mode === 'shooting' && nextWeb.attachPoint) {
+            nextWeb.life += delta;
+            return nextWeb;
           }
 
-          // Check for collision if not yet attached
-          if (!web.isAttached) {
-            const collision = checkWebCollision(
-              web.currentPosition,
-              web.velocity,
-              collisionObjects,
+          // Check for collision if not yet attached - USE BUILDING-SPECIFIC DETECTION
+          if (!nextWeb.isAttached) {
+            const collision = checkBuildingCollision(
+              nextWeb.currentPosition,
+              nextWeb.velocity,
+              scene,
               delta
             );
 
             if (collision.hit && collision.point) {
-              // 💥 WEB HIT SOMETHING!
-              web.isAttached = true;
-              web.attachPoint = collision.point.clone();
-              web.currentPosition.copy(collision.point);
-              web.velocity.set(0, 0, 0);
+              const attachPoint = collision.point.clone();
+
+              // ðŸ’¥ WEB HIT SOMETHING!
+              nextWeb.isAttached = true;
+              nextWeb.attachPoint = attachPoint.clone();
+              nextWeb.currentPosition.copy(attachPoint);
+              nextWeb.velocity.set(0, 0, 0);
               
               // Extend lifetime for attached webs
-              if (web.mode === 'swinging') {
-                web.maxLife = 15.0;
-              } else if (web.mode === 'pulling') {
-                web.maxLife = 10.0;
-                playPull(); // 🔊 Play pull sound
+              if (nextWeb.mode === 'swinging') {
+                nextWeb.maxLife = 15.0;
+              } else if (nextWeb.mode === 'pulling') {
+                nextWeb.maxLife = 10.0;
+                playPull(); // ðŸ”Š Play pull sound
               } else {
-                web.maxLife = 8.0;
+                nextWeb.maxLife = 8.0;
               }
 
-              // 🔊 PLAY IMPACT SOUND
+              // ðŸ”Š PLAY IMPACT SOUND
               playImpact();
 
-              // ✨ CREATE IMPACT EFFECT
+              // âœ¨ CREATE IMPACT EFFECT
               setImpacts(prev => [
                 ...prev,
-                { id: impactIdCounter.current++, position: collision.point.clone() }
+                { id: impactIdCounter.current++, position: attachPoint.clone() }
               ]);
 
               // Add to store attachments
               addAttachment({
-                id: web.id,
-                attachPoint: collision.point,
+                id: nextWeb.id,
+                attachPoint,
                 attachedObjectId: collision.object?.uuid,
                 createdAt: Date.now()
               });
 
-              console.log(`💥 Web attached! Mode: ${web.mode}`, collision.point);
+              console.log(`ðŸ’¥ Web attached! Mode: ${nextWeb.mode}`, collision.point);
             } else {
               // Apply gravity
-              web.velocity.y -= 9.8 * delta;
+              nextWeb.velocity.y -= 9.8 * delta;
 
               // Update position
-              web.currentPosition.x += web.velocity.x * delta;
-              web.currentPosition.y += web.velocity.y * delta;
-              web.currentPosition.z += web.velocity.z * delta;
+              nextWeb.currentPosition.addScaledVector(nextWeb.velocity, delta);
             }
           }
 
           // Update life
-          web.life += delta;
+          nextWeb.life += delta;
 
-          return web;
+          return nextWeb;
         })
         .filter((web) => web.life < web.maxLife);
     });
@@ -310,7 +320,7 @@ export const AdvancedWebShooter = ({ handData, gestureResult }: WebShooterProps)
               opacity={opacity}
               strands={web.isAttached ? 12 : 18}
             />
-            {/* ✨ MOTION TRAIL - Only for flying webs */}
+            {/* Motion trail - only for flying webs */}
             {!web.isAttached && (
               <MotionTrail
                 position={web.currentPosition}
@@ -324,7 +334,7 @@ export const AdvancedWebShooter = ({ handData, gestureResult }: WebShooterProps)
         );
       })}
 
-      {/* 💥 IMPACT EFFECTS */}
+      {/* ðŸ’¥ IMPACT EFFECTS */}
       {impacts.map((impact) => (
         <ImpactEffect
           key={impact.id}
@@ -338,3 +348,4 @@ export const AdvancedWebShooter = ({ handData, gestureResult }: WebShooterProps)
     </group>
   );
 };
+

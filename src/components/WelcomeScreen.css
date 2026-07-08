@@ -1,0 +1,213 @@
+.welcome-screen {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  background: linear-gradient(135deg, #223057 0%, #0a0a0a 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: fadeIn 1s ease-out;
+}
+
+.welcome-bg-pattern {
+  position: absolute;
+  inset: 0;
+  background-image: 
+    repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(231, 32, 32, 0.03) 2px, rgba(231, 32, 32, 0.03) 4px),
+    repeating-linear-gradient(90deg, transparent, transparent 2px, rgba(231, 32, 32, 0.03) 2px, rgba(231, 32, 32, 0.03) 4px);
+  animation: gridMove 20s linear infinite;
+}
+
+@keyframes gridMove {
+  0% { transform: translate(0, 0); }
+  100% { transform: translate(40px, 40px); }
+}
+
+.welcome-content {
+  position: relative;
+  text-align: center;
+  z-index: 1;
+}
+
+.spider-logo {
+  margin: 0 auto 3rem;
+  animation: spiderDrop 1.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+}
+
+.spider-icon {
+  width: 120px;
+  height: 120px;
+  color: #E72020;
+  filter: drop-shadow(0 0 30px rgba(231, 32, 32, 0.8));
+  animation: spiderPulse 2s ease-in-out infinite;
+}
+
+@keyframes spiderDrop {
+  0% { transform: translateY(-200px) rotate(0deg); opacity: 0; }
+  60% { transform: translateY(20px) rotate(180deg); }
+  100% { transform: translateY(0) rotate(180deg); opacity: 1; }
+}
+
+@keyframes spiderPulse {
+  0%, 100% { transform: scale(1) rotate(180deg); }
+  50% { transform: scale(1.1) rotate(180deg); }
+}
+
+.welcome-title {
+  position: relative;
+  font-size: 5rem;
+  font-weight: 900;
+  letter-spacing: 0.1em;
+  margin: 0 0 2rem;
+  text-transform: uppercase;
+}
+
+.title-main {
+  position: relative;
+  display: block;
+  color: #E72020;
+  text-shadow: 
+    0 0 20px rgba(231, 32, 32, 0.8),
+    0 0 40px rgba(154, 19, 22, 0.6),
+    2px 2px 4px rgba(0, 0, 0, 0.8);
+  animation: titleGlow 2s ease-in-out infinite alternate;
+}
+
+.title-glow {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  display: block;
+  color: #E72020;
+  filter: blur(25px);
+  opacity: 0.4;
+  z-index: -1;
+}
+
+@keyframes titleGlow {
+  from { 
+    text-shadow: 
+      0 0 20px rgba(231, 32, 32, 0.8),
+      0 0 40px rgba(154, 19, 22, 0.6),
+      2px 2px 4px rgba(0, 0, 0, 0.8);
+  }
+  to { 
+    text-shadow: 
+      0 0 30px rgba(231, 32, 32, 1),
+      0 0 60px rgba(154, 19, 22, 0.8),
+      2px 2px 4px rgba(0, 0, 0, 0.8);
+  }
+}
+
+.welcome-quote {
+  font-size: 1.2rem;
+  color: rgba(255, 255, 255, 0.7);
+  font-style: italic;
+  margin: 0 0 4rem;
+  line-height: 1.6;
+  animation: fadeIn 2s ease-out 0.5s both;
+}
+
+.start-button {
+  position: relative;
+  padding: 1.5rem 4rem;
+  font-size: 1.2rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  background: transparent;
+  border: 2px solid #E72020;
+  color: #E72020;
+  cursor: pointer;
+  overflow: hidden;
+  transition: all 0.3s ease;
+  animation: buttonPulse 2s ease-in-out infinite;
+}
+
+.start-button::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, transparent, rgba(231, 32, 32, 0.3), transparent);
+  transform: translateX(-100%);
+  animation: buttonShine 3s ease-in-out infinite;
+}
+
+.button-glow {
+  position: absolute;
+  inset: -2px;
+  background: linear-gradient(90deg, #E72020, #9A1316);
+  opacity: 0;
+  filter: blur(10px);
+  transition: opacity 0.3s ease;
+  z-index: -1;
+}
+
+.start-button:hover {
+  transform: scale(1.05);
+  box-shadow: 0 0 40px rgba(231, 32, 32, 0.6);
+}
+
+.start-button:hover .button-glow {
+  opacity: 0.5;
+}
+
+.start-button:active {
+  transform: scale(0.98);
+}
+
+@keyframes buttonPulse {
+  0%, 100% { border-color: #E72020; }
+  50% { border-color: #9A1316; }
+}
+
+@keyframes buttonShine {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(200%); }
+}
+
+.web-particles {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.particle {
+  position: absolute;
+  top: -10px;
+  width: 2px;
+  height: 2px;
+  background: rgba(231, 32, 32, 0.8);
+  border-radius: 50%;
+  box-shadow: 0 0 10px rgba(231, 32, 32, 0.8);
+  animation: particleFall 4s linear infinite;
+}
+
+@keyframes particleFall {
+  0% { transform: translateY(0) rotate(0deg); opacity: 0; }
+  10% { opacity: 1; }
+  90% { opacity: 1; }
+  100% { transform: translateY(110vh) rotate(360deg); opacity: 0; }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@media (max-width: 768px) {
+  .welcome-title {
+    font-size: 3rem;
+  }
+  
+  .spider-icon {
+    width: 80px;
+    height: 80px;
+  }
+  
+  .start-button {
+    padding: 1rem 2.5rem;
+    font-size: 1rem;
+  }
+}

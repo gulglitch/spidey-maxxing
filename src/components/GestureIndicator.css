@@ -1,0 +1,121 @@
+.gesture-indicator {
+  position: fixed;
+  bottom: 60px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 200px;
+  height: 200px;
+  z-index: 100;
+  pointer-events: none;
+}
+
+.indicator-ring {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  transform: rotate(-90deg);
+}
+
+.progress-ring {
+  transition: stroke-dashoffset 0.5s ease, stroke 0.3s ease;
+}
+
+.status-active .progress-ring {
+  animation: ringPulse 1s ease-in-out infinite;
+}
+
+@keyframes ringPulse {
+  0%, 100% { stroke-width: 4; opacity: 1; }
+  50% { stroke-width: 6; opacity: 0.8; }
+}
+
+.indicator-content {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+}
+
+.indicator-icon {
+  font-size: 3rem;
+  margin-bottom: 0.5rem;
+  animation: iconFloat 2s ease-in-out infinite;
+}
+
+@keyframes iconFloat {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-5px); }
+}
+
+.indicator-text {
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  color: white;
+  text-shadow: 0 0 10px currentColor;
+}
+
+.status-error .indicator-text {
+  color: #E72020;
+}
+
+.status-ready .indicator-text {
+  color: #4F6793;
+}
+
+.status-active .indicator-text {
+  color: #9A1316;
+  animation: textPulse 1s ease-in-out infinite;
+}
+
+@keyframes textPulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.8; transform: scale(1.05); }
+}
+
+.indicator-particles {
+  position: absolute;
+  inset: 0;
+}
+
+.particle {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 6px;
+  height: 6px;
+  background: #E72020;
+  border-radius: 50%;
+  box-shadow: 0 0 10px #E72020;
+  animation: particleBurst 1s ease-out infinite;
+  transform-origin: center;
+}
+
+@keyframes particleBurst {
+  0% {
+    transform: translate(-50%, -50%) rotate(var(--angle)) translateY(0);
+    opacity: 1;
+  }
+  100% {
+    transform: translate(-50%, -50%) rotate(var(--angle)) translateY(50px);
+    opacity: 0;
+  }
+}
+
+@media (max-width: 768px) {
+  .gesture-indicator {
+    width: 150px;
+    height: 150px;
+    bottom: 40px;
+  }
+
+  .indicator-icon {
+    font-size: 2rem;
+  }
+
+  .indicator-text {
+    font-size: 0.65rem;
+  }
+}

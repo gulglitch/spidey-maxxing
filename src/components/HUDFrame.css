@@ -1,0 +1,153 @@
+.hud-frame {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 5;
+}
+
+.corner-bracket {
+  position: absolute;
+  width: 80px;
+  height: 80px;
+  border: 2px solid #4F6793;
+  box-shadow: 0 0 15px rgba(79, 103, 147, 0.5);
+  animation: bracketGlow 2s ease-in-out infinite alternate;
+}
+
+.corner-bracket::before,
+.corner-bracket::after {
+  content: '';
+  position: absolute;
+  background: #4F6793;
+  box-shadow: 0 0 10px rgba(79, 103, 147, 0.8);
+}
+
+.top-left {
+  top: 20px;
+  left: 20px;
+  border-right: none;
+  border-bottom: none;
+}
+
+.top-left::before {
+  top: -2px;
+  left: -2px;
+  width: 30px;
+  height: 2px;
+}
+
+.top-left::after {
+  top: -2px;
+  left: -2px;
+  width: 2px;
+  height: 30px;
+}
+
+.top-right {
+  top: 20px;
+  right: 20px;
+  border-left: none;
+  border-bottom: none;
+}
+
+.top-right::before {
+  top: -2px;
+  right: -2px;
+  width: 30px;
+  height: 2px;
+}
+
+.top-right::after {
+  top: -2px;
+  right: -2px;
+  width: 2px;
+  height: 30px;
+}
+
+.bottom-left {
+  bottom: 20px;
+  left: 20px;
+  border-right: none;
+  border-top: none;
+}
+
+.bottom-left::before {
+  bottom: -2px;
+  left: -2px;
+  width: 30px;
+  height: 2px;
+}
+
+.bottom-left::after {
+  bottom: -2px;
+  left: -2px;
+  width: 2px;
+  height: 30px;
+}
+
+.bottom-right {
+  bottom: 20px;
+  right: 20px;
+  border-left: none;
+  border-top: none;
+}
+
+.bottom-right::before {
+  bottom: -2px;
+  right: -2px;
+  width: 30px;
+  height: 2px;
+}
+
+.bottom-right::after {
+  bottom: -2px;
+  right: -2px;
+  width: 2px;
+  height: 30px;
+}
+
+@keyframes bracketGlow {
+  from { box-shadow: 0 0 10px rgba(79, 103, 147, 0.5); }
+  to { box-shadow: 0 0 20px rgba(79, 103, 147, 0.8); }
+}
+
+.scan-line {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, 
+    transparent 0%, 
+    rgba(231, 32, 32, 0.3) 50%, 
+    transparent 100%
+  );
+  animation: scanMove 5s linear infinite;
+}
+
+.scan-line-2 {
+  animation-delay: 2.5s;
+  animation-duration: 7s;
+}
+
+@keyframes scanMove {
+  0% { transform: translateY(0); opacity: 0; }
+  10% { opacity: 1; }
+  90% { opacity: 1; }
+  100% { transform: translateY(100vh); opacity: 0; }
+}
+
+.hex-grid {
+  position: absolute;
+  inset: 0;
+  background-image: 
+    repeating-linear-gradient(0deg, transparent, transparent 40px, rgba(79, 103, 147, 0.02) 40px, rgba(79, 103, 147, 0.02) 42px),
+    repeating-linear-gradient(60deg, transparent, transparent 40px, rgba(79, 103, 147, 0.02) 40px, rgba(79, 103, 147, 0.02) 42px),
+    repeating-linear-gradient(-60deg, transparent, transparent 40px, rgba(79, 103, 147, 0.02) 40px, rgba(79, 103, 147, 0.02) 42px);
+  animation: gridPulse 4s ease-in-out infinite alternate;
+}
+
+@keyframes gridPulse {
+  from { opacity: 0.5; }
+  to { opacity: 1; }
+}

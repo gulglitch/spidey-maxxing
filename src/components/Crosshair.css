@@ -1,0 +1,79 @@
+.crosshair-container {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 80px;
+  height: 80px;
+  pointer-events: none;
+  z-index: 50;
+}
+
+.crosshair {
+  width: 100%;
+  height: 100%;
+  color: var(--mode-color, #00d9ff);
+  filter: drop-shadow(0 0 8px currentColor);
+  animation: crosshairBreathe 3s ease-in-out infinite;
+}
+
+@keyframes crosshairBreathe {
+  0%, 100% { opacity: 0.8; transform: scale(1) rotate(0deg); }
+  50% { opacity: 1; transform: scale(1.05) rotate(180deg); }
+}
+
+.crosshair-ring {
+  animation: ringPulse 2s ease-in-out infinite;
+}
+
+@keyframes ringPulse {
+  0%, 100% { r: 20; stroke-width: 2; }
+  50% { r: 22; stroke-width: 1.5; }
+}
+
+.crosshair-outer {
+  animation: outerExpand 3s ease-in-out infinite;
+}
+
+@keyframes outerExpand {
+  0%, 100% { r: 30; opacity: 0.3; }
+  50% { r: 35; opacity: 0.1; }
+}
+
+.crosshair-line {
+  animation: lineFlicker 1.5s ease-in-out infinite;
+}
+
+@keyframes lineFlicker {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.6; }
+}
+
+.crosshair-dot {
+  animation: dotPulse 1s ease-in-out infinite;
+}
+
+@keyframes dotPulse {
+  0%, 100% { r: 2; opacity: 1; }
+  50% { r: 3; opacity: 0.7; }
+}
+
+/* Mode-specific colors */
+.crosshair-shoot {
+  color: #E72020;
+}
+
+.crosshair-swing {
+  color: #4F6793;
+}
+
+.crosshair-pull {
+  color: #9A1316;
+}
+
+@media (max-width: 768px) {
+  .crosshair-container {
+    width: 60px;
+    height: 60px;
+  }
+}
