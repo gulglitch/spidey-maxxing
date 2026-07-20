@@ -1,4 +1,4 @@
-﻿import { useMemo } from 'react';
+import { useMemo } from 'react';
 import { Vector3 } from 'three';
 import { WebLine } from './WebLine';
 

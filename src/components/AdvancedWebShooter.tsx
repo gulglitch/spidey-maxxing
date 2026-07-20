@@ -1,4 +1,4 @@
-﻿import { useRef, useState, useEffect } from 'react';
+import { useRef, useState, useEffect } from 'react';
 import { useFrame, useThree } from '@react-three/fiber';
 import { Vector3 } from 'three';
 import { SpiderWeb } from './SpiderWeb';
@@ -9,7 +9,7 @@ import { useWebStore } from '../store/webStore';
 import { useAudio } from '../hooks/useAudio';
 import type { HandData, GestureResult } from '../types';
 import { landmarkTo3D, getShootDirection } from '../utils/coordinateTransform';
-import { checkWebCollision, checkBuildingCollision } from '../utils/raycasting';
+import { checkBuildingCollision } from '../utils/raycasting';
 
 interface WebShooterProps {
   handData: HandData | null;
@@ -136,11 +136,6 @@ export const AdvancedWebShooter = ({ handData, gestureResult }: WebShooterProps)
 
   // Animate webs with mode-specific behavior
   useFrame((_, delta) => {
-    const testObjects = scene.getObjectByName('test-objects');
-    const collisionObjects = testObjects
-      ? testObjects.children.filter((object) => object.type !== 'GridHelper')
-      : [];
-
     setWebs((currentWebs) => {
       return currentWebs
         .map((web) => {

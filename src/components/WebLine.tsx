@@ -1,4 +1,4 @@
-﻿import { useMemo } from 'react';
+import { useMemo } from 'react';
 import { Vector3, CatmullRomCurve3 } from 'three';
 import { Line, Sparkles } from '@react-three/drei';
 

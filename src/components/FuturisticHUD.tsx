@@ -36,43 +36,6 @@ export const FuturisticHUD = ({ handData, gestureResult }: FuturisticHUDProps) =
 
   return (
     <div className="futuristic-hud">
-      {/* Geometric Corner Frames */}
-      <div className="corner-frame corner-tl" style={{ transform: `translate(${-parallaxX * 0.1}px, ${-parallaxY * 0.1}px)` }}>
-        <svg viewBox="0 0 200 200" className="corner-svg">
-          <path d="M0,0 L200,0 L200,30 L170,30 L170,50 L30,50 L30,170 L50,170 L50,200 L0,200 Z" className="frame-path" />
-          <path d="M10,10 L190,10 L190,20 L170,20 L170,40 L40,40 L40,180 L50,180 L50,190 L10,190 Z" className="frame-inner" />
-        </svg>
-        <div className="corner-accent corner-accent-1"></div>
-        <div className="corner-accent corner-accent-2"></div>
-      </div>
-
-      <div className="corner-frame corner-tr" style={{ transform: `translate(${parallaxX * 0.1}px, ${-parallaxY * 0.1}px)` }}>
-        <svg viewBox="0 0 200 200" className="corner-svg">
-          <path d="M200,0 L0,0 L0,30 L30,30 L30,50 L170,50 L170,170 L150,170 L150,200 L200,200 Z" className="frame-path" />
-          <path d="M190,10 L10,10 L10,20 L30,20 L30,40 L160,40 L160,180 L150,180 L150,190 L190,190 Z" className="frame-inner" />
-        </svg>
-        <div className="corner-accent corner-accent-1"></div>
-        <div className="corner-accent corner-accent-2"></div>
-      </div>
-
-      <div className="corner-frame corner-bl" style={{ transform: `translate(${-parallaxX * 0.1}px, ${parallaxY * 0.1}px)` }}>
-        <svg viewBox="0 0 200 200" className="corner-svg">
-          <path d="M0,200 L200,200 L200,170 L170,170 L170,150 L30,150 L30,30 L50,30 L50,0 L0,0 Z" className="frame-path" />
-          <path d="M10,190 L190,190 L190,180 L170,180 L170,160 L40,160 L40,20 L50,20 L50,10 L10,10 Z" className="frame-inner" />
-        </svg>
-        <div className="corner-accent corner-accent-1"></div>
-        <div className="corner-accent corner-accent-2"></div>
-      </div>
-
-      <div className="corner-frame corner-br" style={{ transform: `translate(${parallaxX * 0.1}px, ${parallaxY * 0.1}px)` }}>
-        <svg viewBox="0 0 200 200" className="corner-svg">
-          <path d="M200,200 L0,200 L0,170 L30,170 L30,150 L170,150 L170,30 L150,30 L150,0 L200,0 Z" className="frame-path" />
-          <path d="M190,190 L10,190 L10,180 L30,180 L30,160 L160,160 L160,20 L150,20 L150,10 L190,10 Z" className="frame-inner" />
-        </svg>
-        <div className="corner-accent corner-accent-1"></div>
-        <div className="corner-accent corner-accent-2"></div>
-      </div>
-
       {/* Top HUD Bar */}
       <div className="hud-bar hud-top">
         <div className="hud-section hud-left">

@@ -105,7 +105,7 @@ export const getShootDirection = (
 // Legacy velocity-based direction (keep for backward compatibility)
 export const getShootDirectionFromVelocity = (
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  handPosition: [number, number, number],
+  _handPosition: [number, number, number],
   handVelocity: [number, number, number]
 ): [number, number, number] => {
   const baseDirection: [number, number, number] = [0, 0, -1];

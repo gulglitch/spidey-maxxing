@@ -4,7 +4,7 @@ import { Vector3 } from 'three';
 import { SpiderWeb } from './SpiderWeb';
 import type { HandData, GestureResult } from '../types';
 import { landmarkTo3D, getShootDirection } from '../utils/coordinateTransform';
-import { checkWebCollision } from '../utils/raycasting';
+import { checkBuildingCollision } from '../utils/raycasting';
 
 
 interface WebShooterProps {
@@ -123,10 +123,10 @@ export const WebShooter = ({ handData, gestureResult }: WebShooterProps) => {
           }
 
           // Check for collision before moving
-          const collision = checkWebCollision(
+          const collision = checkBuildingCollision(
             web.currentPosition,
             web.velocity,
-            collisionObjects,
+            scene,
             delta
           );
 

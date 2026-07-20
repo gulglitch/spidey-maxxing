@@ -1,17 +1,18 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { useHandTracking } from './hooks/useHandTracking';
 import { detectWebShooterGesture } from './utils/gestureRecognition';
 import { useWebStore } from './store/webStore';
-import { WelcomeScreen } from './components/WelcomeScreen';
-import { WebcamView } from './components/WebcamView';
-import { Scene3D } from './components/Scene3D';
+import WelcomeScreen from './components/WelcomeScreen';
+import { GameplayCanyonScene, type GameplayCanyonHandle } from './components/GameplayCanyonScene';
 import { FuturisticHUD } from './components/FuturisticHUD';
+import { InteractiveWebBackground } from './components/InteractiveWebBackground';
 import './App.css';
 
 function App() {
   const [showWelcome, setShowWelcome] = useState(true);
-  const { handData, isLoading, error, videoRef } = useHandTracking();
+  const { handData, isLoading, error } = useHandTracking();
   const { setHandData, setGestureResult, gestureResult } = useWebStore();
+  const canyonSceneRef = useRef<GameplayCanyonHandle>(null);
 
   useEffect(() => {
     setHandData(handData);
@@ -34,14 +35,12 @@ function App() {
 
   return (
     <>
-      {/* Fullscreen Webcam Video - Base Layer */}
-      {!isLoading && !error && (
-        <WebcamView videoElement={videoRef.current} handData={handData} />
-      )}
+      {/* Interactive Web Background - Always visible */}
+      <InteractiveWebBackground />
 
-      {/* 3D Canvas Overlay - Buildings and effects */}
+      {/* GameplayCanyonScene - Webcam + 3D Buildings + Web shooting */}
       {!isLoading && !error && (
-        <Scene3D handData={handData} gestureResult={gestureResult} />
+        <GameplayCanyonScene ref={canyonSceneRef} />
       )}
 
       {/* Futuristic HUD Overlay */}

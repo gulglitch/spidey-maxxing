@@ -54,8 +54,9 @@
   border-radius: 20px;
   border: 2px solid #4F6793;
   box-shadow: 0 0 40px rgba(79, 103, 147, 0.3);
-  z-index: 1000;
+  z-index: 9999;
   min-width: 400px;
+  pointer-events: auto;
 }
 
 .spinner {

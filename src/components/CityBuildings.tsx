@@ -189,7 +189,6 @@ const ArchitecturalPanel = ({ position, size, type, rotation = [0, 0, 0] }: Arch
       ctx.strokeRect(10, 10, 492, 492);
       
       // Corner details
-      const cornerSize = 30;
       ctx.lineWidth = 3;
       // Top-left
       ctx.beginPath();

@@ -12,34 +12,65 @@ export const ArchitecturalBorder = () => {
   const panels = useMemo<Panel[]>(() => {
     const list: Panel[] = [];
     
-    // LEFT WALL - Vertical architectural panels
-    for (let i = 0; i < 7; i++) {
-      const y = -12 + i * 6;
-      list.push({ position: [-22, y, 0], size: [4, 5, 35], type: 'wall' });
-      list.push({ position: [-21, y + 1, -8 + i * 5], size: [2, 3, 8], type: 'window' });
-      list.push({ position: [-24, y - 1, -10 + i * 6], size: [0.8, 0.8, 10], type: 'pipe' });
-    }
+    // LEFT WALL - Buildings with varying heights creating jagged skyline
+    list.push({ position: [-22, -10, 0], size: [4, 20, 35], type: 'wall' });
+    list.push({ position: [-22, 5, -10], size: [4, 10, 15], type: 'wall' });
+    list.push({ position: [-22, -5, 10], size: [4, 30, 15], type: 'wall' });
     
-    // RIGHT WALL - Mirror left
-    for (let i = 0; i < 7; i++) {
-      const y = -12 + i * 6;
-      list.push({ position: [22, y, 0], size: [4, 5, 35], type: 'wall' });
-      list.push({ position: [21, y + 1, -8 + i * 5], size: [2, 3, 8], type: 'window' });
-      list.push({ position: [24, y - 1, -10 + i * 6], size: [0.8, 0.8, 10], type: 'pipe' });
-    }
+    list.push({ position: [-23, -8, -5], size: [2, 24, 8], type: 'wall' });
+    list.push({ position: [-23, 7, 5], size: [2, 14, 8], type: 'wall' });
     
-    // TOP BEAMS - Horizontal architectural elements
-    for (let i = 0; i < 8; i++) {
-      const x = -18 + i * 5;
-      list.push({ position: [x, 20, 0], size: [4, 2, 35], type: 'beam' });
-      list.push({ position: [x, 19, -6 + i * 3], size: [3, 0.5, 6], type: 'window' });
-    }
+    list.push({ position: [-21, -5, -12], size: [2, 18, 6], type: 'window' });
+    list.push({ position: [-21, 8, 8], size: [2, 12, 6], type: 'window' });
     
-    // BOTTOM BASE - Foundation panels
-    for (let i = 0; i < 8; i++) {
-      const x = -18 + i * 5;
-      list.push({ position: [x, -18, 0], size: [4, 3, 35], type: 'beam' });
-    }
+    list.push({ position: [-24, -5, -8], size: [0.8, 0.8, 10], type: 'pipe' });
+    list.push({ position: [-24, 5, 8], size: [0.8, 0.8, 10], type: 'pipe' });
+    
+    // RIGHT WALL - Buildings with varying heights creating jagged skyline
+    list.push({ position: [22, -8, 0], size: [4, 24, 35], type: 'wall' });
+    list.push({ position: [22, 8, -10], size: [4, 16, 15], type: 'wall' });
+    list.push({ position: [22, -2, 10], size: [4, 26, 15], type: 'wall' });
+    
+    list.push({ position: [23, -6, -5], size: [2, 20, 8], type: 'wall' });
+    list.push({ position: [23, 9, 5], size: [2, 18, 8], type: 'wall' });
+    
+    list.push({ position: [21, -4, -12], size: [2, 16, 6], type: 'window' });
+    list.push({ position: [21, 10, 8], size: [2, 14, 6], type: 'window' });
+    
+    list.push({ position: [24, -3, -8], size: [0.8, 0.8, 10], type: 'pipe' });
+    list.push({ position: [24, 7, 8], size: [0.8, 0.8, 10], type: 'pipe' });
+    
+    // TOP BEAMS - Various widths and positioned to fill space
+    list.push({ position: [-20, 20, 0], size: [5, 2, 35], type: 'beam' });
+    list.push({ position: [-14, 20, 0], size: [3.5, 2, 35], type: 'beam' });
+    list.push({ position: [-9, 20, 0], size: [4.2, 2, 35], type: 'beam' });
+    list.push({ position: [-3, 20, 0], size: [6, 2, 35], type: 'beam' });
+    list.push({ position: [4, 20, 0], size: [3.8, 2, 35], type: 'beam' });
+    list.push({ position: [9, 20, 0], size: [5.5, 2, 35], type: 'beam' });
+    list.push({ position: [16, 20, 0], size: [4, 2, 35], type: 'beam' });
+    
+    list.push({ position: [-18, 21.5, -8], size: [3, 1.5, 10], type: 'beam' });
+    list.push({ position: [-12, 21.5, -8], size: [4.5, 1.5, 10], type: 'beam' });
+    list.push({ position: [-5, 21.5, -8], size: [3.5, 1.5, 10], type: 'beam' });
+    list.push({ position: [2, 21.5, -8], size: [5, 1.5, 10], type: 'beam' });
+    list.push({ position: [9, 21.5, -8], size: [3.2, 1.5, 10], type: 'beam' });
+    list.push({ position: [14, 21.5, -8], size: [4.8, 1.5, 10], type: 'beam' });
+    
+    // BOTTOM BASE - Various widths positioned to fill space
+    list.push({ position: [-20, -18, 0], size: [4.5, 3, 35], type: 'beam' });
+    list.push({ position: [-14, -18, 0], size: [5.5, 3, 35], type: 'beam' });
+    list.push({ position: [-7, -18, 0], size: [3.8, 3, 35], type: 'beam' });
+    list.push({ position: [-2, -18, 0], size: [6, 3, 35], type: 'beam' });
+    list.push({ position: [5, -18, 0], size: [4, 3, 35], type: 'beam' });
+    list.push({ position: [10, -18, 0], size: [5, 3, 35], type: 'beam' });
+    list.push({ position: [16, -18, 0], size: [4.2, 3, 35], type: 'beam' });
+    
+    list.push({ position: [-18, -19.5, -8], size: [3.5, 2, 10], type: 'beam' });
+    list.push({ position: [-13, -19.5, -8], size: [4.8, 2, 10], type: 'beam' });
+    list.push({ position: [-6, -19.5, -8], size: [5.2, 2, 10], type: 'beam' });
+    list.push({ position: [1, -19.5, -8], size: [3.8, 2, 10], type: 'beam' });
+    list.push({ position: [7, -19.5, -8], size: [6, 2, 10], type: 'beam' });
+    list.push({ position: [15, -19.5, -8], size: [4.5, 2, 10], type: 'beam' });
     
     return list;
   }, []);
@@ -84,8 +115,8 @@ const ArchPanel = ({ position, size, type }: Panel) => {
     
     const glowColors = {
       wall: '#E72020',
-      window: '#00d9ff',
-      pipe: '#4F6793',
+      window: '#E72020',
+      pipe: '#E72020',
       beam: '#9A1316'
     };
     
@@ -143,7 +174,7 @@ const ArchPanel = ({ position, size, type }: Panel) => {
           const y = r * h + 10;
           const isLit = Math.random() > 0.3;
           
-          ctx.fillStyle = isLit ? '#00d9ff' : '#0a0a1a';
+          ctx.fillStyle = isLit ? '#E72020' : '#0a0a1a';
           ctx.fillRect(x, y, w - 20, h - 20);
           
           if (isLit) {
@@ -151,8 +182,8 @@ const ArchPanel = ({ position, size, type }: Panel) => {
               x + w/2, y + h/2, 0,
               x + w/2, y + h/2, w/2
             );
-            gradient.addColorStop(0, 'rgba(0, 217, 255, 0.8)');
-            gradient.addColorStop(1, 'rgba(0, 217, 255, 0)');
+            gradient.addColorStop(0, 'rgba(231, 32, 32, 0.8)');
+            gradient.addColorStop(1, 'rgba(231, 32, 32, 0)');
             ctx.fillStyle = gradient;
             ctx.fillRect(x, y, w - 20, h - 20);
           }
