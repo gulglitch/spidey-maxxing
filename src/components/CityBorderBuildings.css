@@ -1,0 +1,186 @@
+.city-border {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 20;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+/* ─── SHARED BUILDING BASE ─── */
+.building {
+  position: absolute;
+  background: #0a0b10;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+.building::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(10,11,16,0) 60%, rgba(231,32,32,0.06) 100%);
+  z-index: 1;
+}
+
+/* ─── WINDOW GRID ─── */
+.windows {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  gap: 3px;
+  padding: 6px;
+  z-index: 2;
+}
+
+.win {
+  background: #0a0b10;
+  border: 1px solid rgba(255, 255, 255, 0.04);
+  border-radius: 1px;
+}
+
+/* Lit window variants */
+.win.red {
+  background: rgba(231, 32, 32, 0.75);
+  box-shadow: 0 0 6px rgba(231, 32, 32, 0.6), inset 0 0 4px rgba(255,100,100,0.4);
+  animation: flickerRed 4s ease-in-out infinite;
+}
+.win.red-dim {
+  background: rgba(154, 19, 22, 0.45);
+  box-shadow: 0 0 4px rgba(154, 19, 22, 0.4);
+  animation: flickerRed 6s ease-in-out infinite 1.2s;
+}
+.win.blue {
+  background: rgba(79, 103, 147, 0.7);
+  box-shadow: 0 0 6px rgba(79, 103, 147, 0.5), inset 0 0 4px rgba(100,150,255,0.3);
+  animation: flickerBlue 5s ease-in-out infinite 0.8s;
+}
+.win.blue-dim {
+  background: rgba(34, 48, 87, 0.5);
+  box-shadow: 0 0 3px rgba(34, 48, 87, 0.5);
+  animation: flickerBlue 7s ease-in-out infinite 2s;
+}
+.win.warm {
+  background: rgba(255, 160, 60, 0.35);
+  box-shadow: 0 0 5px rgba(255, 160, 60, 0.3);
+}
+
+@keyframes flickerRed {
+  0%, 90%, 100% { opacity: 1; }
+  92% { opacity: 0.4; }
+  95% { opacity: 0.9; }
+  97% { opacity: 0.3; }
+}
+@keyframes flickerBlue {
+  0%, 85%, 100% { opacity: 1; }
+  87% { opacity: 0.5; }
+  90% { opacity: 1; }
+  93% { opacity: 0.6; }
+}
+
+/* Roof accent line */
+.building-roof {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, rgba(231,32,32,0.8), transparent);
+  z-index: 3;
+}
+.building-roof.blue {
+  background: linear-gradient(90deg, transparent, rgba(79,103,147,0.8), transparent);
+}
+
+/* ─── LEFT WALL ─── */
+.city-left {
+  top: 0;
+  left: 0;
+  bottom: 0;
+  width: 160px;
+  display: flex;
+  flex-direction: row;
+  align-items: flex-end;
+}
+
+.city-left .building {
+  bottom: 0;
+  width: 100%;
+  border-right: 1px solid rgba(231,32,32,0.15);
+}
+
+/* ─── RIGHT WALL ─── */
+.city-right {
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: 160px;
+  display: flex;
+  flex-direction: row;
+  align-items: flex-end;
+}
+
+.city-right .building {
+  bottom: 0;
+  width: 100%;
+  border-left: 1px solid rgba(79,103,147,0.15);
+}
+
+/* ─── TOP WALL ─── */
+.city-top {
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 160px;
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+}
+
+.city-top .building {
+  top: 0;
+  height: 100%;
+  border-bottom: 1px solid rgba(231,32,32,0.12);
+}
+
+/* ─── BOTTOM WALL ─── */
+.city-bottom {
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 120px;
+  display: flex;
+  flex-direction: row;
+  align-items: flex-end;
+}
+
+.city-bottom .building {
+  bottom: 0;
+  height: 100%;
+  border-top: 1px solid rgba(231,32,32,0.12);
+}
+
+/* ─── CORNER BLOCKS ─── */
+/* Solid corners fill gaps where side walls meet top/bottom */
+.city-corner {
+  position: absolute;
+  background: #0a0b10;
+  z-index: 21;
+}
+.city-corner-tl { top: 0; left: 0; width: 160px; height: 160px; }
+.city-corner-tr { top: 0; right: 0; width: 160px; height: 160px; }
+.city-corner-bl { bottom: 0; left: 0; width: 160px; height: 120px; }
+.city-corner-br { bottom: 0; right: 0; width: 160px; height: 120px; }
+
+/* Corner glow accents */
+.city-corner::after {
+  content: '';
+  position: absolute;
+  background: rgba(231,32,32,0.25);
+}
+.city-corner-tl::after { bottom: 0; right: 0; width: 2px; height: 40px; }
+.city-corner-tr::after { bottom: 0; left: 0; width: 2px; height: 40px; background: rgba(79,103,147,0.3); }
+.city-corner-bl::after { top: 0; right: 0; width: 2px; height: 30px; }
+.city-corner-br::after { top: 0; left: 0; width: 2px; height: 30px; background: rgba(79,103,147,0.3); }

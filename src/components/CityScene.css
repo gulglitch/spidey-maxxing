@@ -1,0 +1,15 @@
+.city-scene-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 5;
+  pointer-events: none;
+}
+
+.city-scene-container canvas {
+  width: 100% !important;
+  height: 100% !important;
+  pointer-events: none;
+}
